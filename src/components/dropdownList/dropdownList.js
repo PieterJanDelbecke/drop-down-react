@@ -1,59 +1,88 @@
-import React, { useEffect, useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
-import { AiOutlineLine, AiOutlineSearch } from 'react-icons/ai'
-import { IconContext } from 'react-icons'
-import data from '../../data/data.json'
-import popular from '../../data/popular.json'
-import { CountryInput, Label, List, ListItem} from './dropdownListStyles'
-import { Container, Text} from '../../globalStyles'
+import React, { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { AiOutlineLine, AiOutlineSearch } from "react-icons/ai";
+import { IconContext } from "react-icons";
+import data from "../../data/data.json";
+import popular from "../../data/popular.json";
+import { CountryInput, Label, List, ListItem } from "./dropdownListStyles";
+import { Container, Text } from "../../globalStyles";
+import Flag from "react-flagkit";
 
-const DropdownList = ({closeDropDown, show, listRef}) => {
+const DropdownList = ({ closeDropDown, show, listRef }) => {
+  const [search, setSearch] = useState("");
 
-    const [search, setSearch] = useState('')
-
-    useEffect(()=> {
-        if (!show){
-            setSearch('')
-        }
-    },[show])
-
-    const handleSearch = searchText => {
-        setSearch(searchText)
+  useEffect(() => {
+    if (!show) {
+      setSearch("");
     }
+  }, [show]);
 
-    const filterCountry = el => {
-        const searchText = search.trim().toLowerCase();
+  const handleSearch = (searchText) => {
+    setSearch(searchText);
+  };
 
-        const name = el.name.trim().toLowerCase().includes(searchText)
-        const code = el.cur.trim().toLowerCase().includes(searchText)
+  const filterCountry = (el) => {
+    const searchText = search.trim().toLowerCase();
 
-        return name || code
-    }
+    const name = el.name.trim().toLowerCase().includes(searchText);
+    const code = el.cur.trim().toLowerCase().includes(searchText);
+
+    return name || code;
+  };
 
   return (
     <AnimatePresence>
-        { show && (
-            <List
-                initial={{opacity: 0, height: '0%'}}
-                animate={{opacity: 1, height: 'auto'}}
-                exit={{opacity: 0}}
-            >
-                <Container>
-                    <ListItem>
-                        <IconContext.Provider value={{size: '2rem', color: '#c9c9c9'}}>
-                            <AiOutlineSearch />
-                        </IconContext.Provider>
-                        <CountryInput 
-                        value={search} 
-                        onChange={e => handleSearch(e.target.value)}
-                        type="text"
-                        />
-                    </ListItem>
-                </Container>
-            </List>
-        )}
-    </AnimatePresence>
-  )
-}
+      {show && (
+        <List
+          initial={{ opacity: 0, height: "0%" }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0 }}
+        >
+          <Container ref={listRef}>
+            <ListItem padding="0" noHover>
+              <IconContext.Provider value={{ size: "2rem", color: "#c9c9c9" }}>
+                <AiOutlineSearch />
+              </IconContext.Provider>
+              <CountryInput
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+                type="text"
+              />
+            </ListItem>
 
-export default DropdownList
+            {search.length === 0 && (
+              <>
+                <ListItem noHover noPointer>
+                  <Label weight="bold">Popular Currencies </Label>
+                </ListItem>
+                {popular.map((el, index) => {
+                  return (
+                    <ListItem key={index} onClick={() => closeDropDown(el)}>
+                      <Flag size={28} country={el.cur.slice(0, -1)} />{" "}
+                      <Text>{el.cur}</Text>
+                      <Label size="1rem">{el.name}</Label>
+                    </ListItem>
+                  );
+                })}
+                <ListItem noHover noPointer>
+                  <Label weight="bold">All Currencies </Label>
+                </ListItem>
+              </>
+            )}
+            {data.filter(el => filterCountry(el)).map((el, index) => {
+                  return (
+                    <ListItem key={index} onClick={() => closeDropDown(el)}>
+                      <Flag size={28} country={el.cur.slice(0, -1)} />{" "}
+                      <Text>{el.cur}</Text>
+                      <Label size="1rem">{el.name}</Label>
+                    </ListItem>
+                  );
+            })}
+          </Container>
+        </List>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default DropdownList;
