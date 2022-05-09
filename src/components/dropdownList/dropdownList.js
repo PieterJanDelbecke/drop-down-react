@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { AiOutlineLine, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import data from "../../data/data.json";
 import popular from "../../data/popular.json";
@@ -38,7 +38,7 @@ const DropdownList = ({ closeDropDown, show, listRef }) => {
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0 }}
         >
-          <Container ref={listRef}>
+          <Container ref={listRef}> 
             <ListItem padding="0" noHover>
               <IconContext.Provider value={{ size: "2rem", color: "#c9c9c9" }}>
                 <AiOutlineSearch />

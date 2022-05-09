@@ -6,9 +6,10 @@ import { IconContext } from "react-icons";
 import { AiOutlineCaretDown } from "react-icons/ai";
 import DropdownList from "../dropdownList/dropdownList";
 
-const Dropdown = (currency, setCurrency) => {
+const Dropdown = ({ currency, setCurrency }) => {
+  const ref = useRef();
+  const listRef = useRef('USD');
   const [show, setShow] = useState(false);
-  const listRef = useRef();
 
   const closeDropDown = (el) => {
     setCurrency(el.cur);
@@ -17,32 +18,47 @@ const Dropdown = (currency, setCurrency) => {
 
   useEffect(() => {
     const handleMouseClick = (e) => {
+      console.log("e.target", e.target)
       if (show && !listRef?.current?.contains(e.target)) {
         setShow(false);
       }
     };
 
-    window.addEventListener('click', handleMouseClick);
+    window.addEventListener("click", handleMouseClick);
 
     return () => {
-      window.removeEventListener('click', handleMouseClick);
+      window.removeEventListener("click", handleMouseClick);
     };
-  }, [show,listRef]);
+  }, [show, ref]);
+
+
+  useEffect(() => {
+    if (show && window.innerWidth <= 960) {
+        document.body.style.overflowY = 'hidden';
+        return;
+    }
+    document.body.style.overflowY = 'scroll';
+}, [show])
+
+  const handleClick = () => {
+    console.log("button2 clicked")
+    setShow(true)
+  }
 
   return (
     <DropdownContainer>
-      <CurrencyDropdown onClick={() => setShow(true)}>
-        <Flag size="32" country={currency.slice(0,-1)} />
+      <CurrencyDropdown ref={ref} onClick={ handleClick}>
+        <Flag size={32} country={currency.slice(0, -1)} />
         <Text color="#f4f4f4">{currency}</Text>
         <IconContext.Provider value={{ size: "1.3rem", color: "#dfdfdf" }}>
           <AiOutlineCaretDown />
         </IconContext.Provider>
       </CurrencyDropdown>
       <DropdownList
-        show={show}
         listRef={listRef}
-        closeDropdown={closeDropDown}
         setCurrency={setCurrency}
+        show={show}
+        closeDropdown={closeDropDown}
       />
     </DropdownContainer>
   );

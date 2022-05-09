@@ -15,8 +15,8 @@ export const CurrencyDropdown = styled.button`
     border: none;
     border-radius: 5px;
     padding: 15px;
-    font-size: 1.1 rem;
-    gap: 0.5 rem;
+    font-size: 1.1rem;
+    gap: 0.5rem;
     cursor: pointer;
 
     &:hover{
